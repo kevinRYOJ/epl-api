@@ -1,0 +1,170 @@
+/* Global */
+.container {
+  text-align: center;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.title {
+  color: #222;
+}
+
+.search-box {
+  padding: 8px 12px;
+  width: 250px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* Grid / Cards */
+.team-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.team-card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  width: 200px;
+  padding: 15px;
+  text-align: center;
+  background: #f9f9f9;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.team-card:hover {
+  transform: scale(1.05);
+  background: #fff;
+}
+
+.team-logo {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  /* penting supaya logo proporsional */
+}
+
+/* Links & small controls */
+.website-link {
+  display: inline-block;
+  margin-top: 8px;
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.website-link:hover {
+  text-decoration: underline;
+}
+
+.see-more {
+  background-color: transparent;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0;
+  margin-top: 5px;
+}
+
+.see-more:hover {
+  text-decoration: underline;
+}
+
+/* Modal dasar */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 15px;
+  padding: 25px;
+  max-width: 600px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+  animation: fadeIn 0.3s ease-in-out;
+  max-height: 80vh;
+  /* supaya tidak melebihi layar */
+  overflow-y: auto;
+  /* scroll di dalam modal bila konten panjang */
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  border: none;
+  background: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: #555;
+}
+
+.modal-logo {
+  width: 120px;
+  margin: 15px auto;
+  display: block;
+  object-fit: contain;
+}
+
+.modal-description {
+  text-align: justify;
+  margin-top: 10px;
+  color: #444;
+  line-height: 1.5;
+}
+
+/* Tombol Kembali */
+.back-button {
+  margin-top: 20px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #0056b3;
+}
+
+/* Animasi */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Responsive (opsional) */
+@media (max-width: 600px) {
+  .team-card {
+    width: calc(50% - 20px);
+  }
+
+  .search-box {
+    width: 90%;
+  }
+}
