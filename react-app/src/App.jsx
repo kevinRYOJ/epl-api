@@ -9,21 +9,34 @@ function App() {
   const [selectedTeam, setSelectedTeam] = useState(null);
 
   useEffect(() => {
+    console.log("useEffect dijalankan sekali (mount)");
     axios.get(API_BASE_URL).then((response) => {
       console.log(response.data);
       setTeams(response.data.teams);
     });
   }, []);
 
+
+  useEffect(() => {
+    // Set searchTerm ke 'che' untuk test (nanti bisa dihapus kalau udah yakin)
+    setSearchTerm('che');
+    console.log("searchTerm di-set ke 'che' untuk pengujian filter");
+  }, []);
+
   const filteredTeams = teams.filter((team) =>
+
     team.strTeam.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  console.log("Filtered teams:", filteredTeams.map(t => t.strTeam));
+
 
   const openModal = (team) => {
     setSelectedTeam(team);
+    console.log("openModal dipanggil dengan:", team);
   };
 
   const closeModal = () => {
+    console.log("closeModal dipanggil, menutup modal");
     setSelectedTeam(null);
   };
 
