@@ -1,13 +1,18 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { render, screen, fireEvent } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import axios from "axios";
 import App from "../App";
 
-// Mock axios agar tidak benar-benar memanggil API
+// Mock axios
 vi.mock("axios");
 
 describe("🧩 White Box System Test for App.jsx", () => {
+
+  // ✅ reset mock sebelum tiap test
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it("WB-01: should call axios.get once when mounted", async () => {
     const mockTeams = {
@@ -23,13 +28,11 @@ describe("🧩 White Box System Test for App.jsx", () => {
 
     render(<App />);
 
-    // Pastikan axios.get hanya dipanggil sekali
-    await waitFor(() => {
-      expect(axios.get).toHaveBeenCalledTimes(1);
-    });
+    // tunggu data muncul
+    const chelsea = await screen.findByText(/Chelsea/i);
+    expect(chelsea).toBeInTheDocument();
 
-    // Cek data tampil
-    expect(await screen.findByText(/Chelsea/i)).toBeInTheDocument();
+    expect(axios.get).toHaveBeenCalledTimes(1);
   });
 
   it("WB-02: should filter team based on searchTerm", async () => {
@@ -45,8 +48,7 @@ describe("🧩 White Box System Test for App.jsx", () => {
 
     render(<App />);
 
-    // Tunggu data muncul
-    await waitFor(() => screen.getByText("Chelsea"));
+    await screen.findByText("Chelsea");
 
     const input = screen.getByPlaceholderText("Cari tim...");
     fireEvent.change(input, { target: { value: "che" } });
@@ -55,19 +57,15 @@ describe("🧩 White Box System Test for App.jsx", () => {
     expect(screen.getByText(/Chelsea/i)).toBeInTheDocument();
   });
 
-  it("OTM-02: should handle axios error properly", async () => {
+  it("WB-03: should handle axios error properly", async () => {
     axios.get.mockRejectedValueOnce(new Error("Network Error"));
 
     render(<App />);
 
-    // Pastikan error di-handle
-    await waitFor(() => {
-      // Bisa disesuaikan tergantung UI kamu — apakah muncul "Error" atau hanya console.log
-      expect(axios.get).toHaveBeenCalledTimes(1);
-    });
+    // tunggu error muncul di UI
+    const errorText = await screen.findByText(/Network Error/i);
+    expect(errorText).toBeInTheDocument();
 
-    // Jika App menampilkan error di layar, cek tampilannya
-    const errorText = screen.queryByText(/Error/i) || screen.queryByText(/Network Error/i);
-    expect(errorText).toBeTruthy();
+    expect(axios.get).toHaveBeenCalledTimes(1);
   });
 });

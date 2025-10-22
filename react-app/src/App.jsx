@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { API_BASE_URL } from "./config";
 import "./App.css";
@@ -7,28 +7,33 @@ function App() {
   const [teams, setTeams] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTeam, setSelectedTeam] = useState(null);
+  const [error, setError] = useState(null); // ✅ state untuk error
+
+  const fetchedRef = useRef(false);
 
   useEffect(() => {
+    if (fetchedRef.current) return;
+    fetchedRef.current = true;
+
     console.log("useEffect dijalankan sekali (mount)");
-    axios.get(API_BASE_URL).then((response) => {
-      console.log(response.data);
-      setTeams(response.data.teams);
-    });
-  }, []);
 
-
-  useEffect(() => {
-    // Set searchTerm ke 'che' untuk test (nanti bisa dihapus kalau udah yakin)
-    setSearchTerm('che');
-    console.log("searchTerm di-set ke 'che' untuk pengujian filter");
+    axios
+      .get(API_BASE_URL)
+      .then((response) => {
+        console.log(response.data);
+        setTeams(response.data.teams);
+      })
+      .catch((err) => {
+        console.error("Terjadi kesalahan saat fetch data:", err.message);
+        setTeams([]);
+        setError(err.message); // ✅ set error
+      });
   }, []);
 
   const filteredTeams = teams.filter((team) =>
-
     team.strTeam.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  console.log("Filtered teams:", filteredTeams.map(t => t.strTeam));
-
+  console.log("Filtered teams:", filteredTeams.map((t) => t.strTeam));
 
   const openModal = (team) => {
     setSelectedTeam(team);
@@ -42,9 +47,8 @@ function App() {
 
   return (
     <div className="container">
-      <h1 className="title">Premier Leage Teams</h1>
+      <h1 className="title">Premier League Teams</h1>
 
-      {/*Input pencarian */}
       <input
         type="text"
         placeholder="Cari tim..."
@@ -52,6 +56,8 @@ function App() {
         onChange={(e) => setSearchTerm(e.target.value)}
         className="search-box"
       />
+
+      {error && <p className="error">Error: {error}</p>} {/* ✅ tampilkan error */}
 
       <div className="team-grid">
         {filteredTeams.map((team) => (
@@ -61,10 +67,12 @@ function App() {
             ) : (
               <p>No logo</p>
             )}
-            <h3>{team.strTeam}</h3>
-            <p><strong>Stadion:</strong> {team.strStadium}</p>
 
-            {/*tampilkan hanya sebagian deskripsi */}
+            <h3>{team.strTeam}</h3>
+            <p>
+              <strong>Stadion:</strong> {team.strStadium}
+            </p>
+
             <p>
               <strong>Deskripsi:</strong>{" "}
               {team.strDescriptionEN
@@ -92,7 +100,6 @@ function App() {
         ))}
       </div>
 
-      {/*Modal pop-up */}
       {selectedTeam && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -101,7 +108,9 @@ function App() {
             </button>
 
             <h2>{selectedTeam.strTeam}</h2>
-            <p><strong>Stadion:</strong> {selectedTeam.strStadium}</p>
+            <p>
+              <strong>Stadion:</strong> {selectedTeam.strStadium}
+            </p>
 
             <img
               src={selectedTeam.strBadge}
@@ -111,8 +120,6 @@ function App() {
 
             <p className="modal-description">{selectedTeam.strDescriptionEN}</p>
 
-
-            {/*Tombol Kembali */}
             <button className="back-button" onClick={closeModal}>
               Kembali
             </button>
